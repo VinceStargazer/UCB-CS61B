@@ -144,7 +144,7 @@ public class IntList {
 
     /**
      * Destructively modify and return x to contain no occurences of y,
-     * 21 without using the keyword "new".
+     * without using the keyword "new".
      * */
     public static IntList dilsans(IntList x, int y) {
         if (x == null) {
