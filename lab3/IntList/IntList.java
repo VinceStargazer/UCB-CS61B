@@ -11,11 +11,11 @@ public class IntList {
     /**
      * First element of list.
      */
-    public int first;
+    private int first;
     /**
      * Remaining elements of list.
      */
-    public IntList rest;
+    private IntList rest;
 
     /**
      * A List with first FIRST0 and rest REST0.
@@ -81,7 +81,6 @@ public class IntList {
      */
 
     public static IntList dcatenate(IntList A, IntList B) {
-        //TODO:  fill in method
         IntList L = A;
         while (L.rest != null) {
             L = L.rest;
@@ -95,14 +94,11 @@ public class IntList {
      * * elements of B.  May NOT modify items of A.  Use 'new'.
      */
     public static IntList catenate(IntList A, IntList B) {
-        //TODO:  fill in method
         if (A != null) {
             return new IntList(A.first, catenate(A.rest, B));
-        }
-        else if (B != null) {
+        } else if (B != null) {
             return new IntList(B.first, catenate(A, B.rest));
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -155,6 +151,26 @@ public class IntList {
             return x.rest;
         }
         return x;
+    }
+
+    /**
+     * Returns the reverse of the given IntList.
+     * This method is destructive. If given null
+     * as an input, returns null.
+     */
+    public static IntList reverse(IntList A) {
+        if (A == null) {
+            return null;
+        }
+        IntList p = A.rest;
+        A.rest = null;
+        while (p != null) {
+            IntList temp = new IntList(A.first, A.rest);
+            A.first = p.first;
+            A.rest = temp;
+            p = p.rest;
+        }
+        return A;
     }
 
 
@@ -222,10 +238,7 @@ public class IntList {
                 return false;
             }
         }
-        if (p != null || L != null) {
-            return false;
-        }
-        return true;
+        return p == null && L == null;
     }
 
     /**
@@ -271,9 +284,9 @@ public class IntList {
         }
     }
 
-    @Override
     /** Outputs the IntList as a String. You are not expected to read
      * or understand this method. */
+    @Override
     public String toString() {
         Formatter out = new Formatter();
         String sep;
