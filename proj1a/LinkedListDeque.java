@@ -90,7 +90,7 @@ public class LinkedListDeque<T> {
         for (int i = 0; i < size; i++) {
             System.out.print(get(i) + " ");
         }
-        System.out.print("\n");
+        System.out.println();
     }
 
     public int size() {
