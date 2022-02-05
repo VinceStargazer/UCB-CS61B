@@ -1,57 +1,56 @@
 public class ArrayDeque<T> {
     private T[] items;
-    private int capacity = 8;
+    private int capacity;
     private int nextFirst = 7;
     private int nextLast = 0;
     private int size = 0;
     private int REFACTOR_SIZE = 2;
-    private int CAPACITY_BASE = 16;
+    private int CAPACITY_BASE = 8;
     private double USAGE_RATIO = 0.25;
 
     public ArrayDeque() {
+        this(8);
+    }
+
+    public ArrayDeque(int capacity) {
         items = (T[]) new Object[capacity];
+        this.capacity = capacity;
     }
 
     public ArrayDeque(ArrayDeque other) {
-        this();
+        this(other.capacity);
         for (int i = 0; i < other.size(); i++) {
             addLast((T) other.get(i));
         }
-    }
-
-    public void reshape(int index, int capacity) {
-        T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, index + 1, a, 0, size - index);
-        System.arraycopy(items, 0, a, size - index, index);
-        items = a;
         nextFirst = capacity - 1;
         nextLast = size;
     }
 
-    public void expandArray(int index) {
-        T[] a = (T[]) new Object[capacity * REFACTOR_SIZE];
-        System.arraycopy(items, 0, a, 0, index);
-        System.arraycopy(items, index + 1, a,
-                size + index + 2, size - index);
+    public void reshape(int newCapacity) {
+        T[] a = (T[]) new Object[newCapacity];
+        System.arraycopy(items, nextFirst + 1, a, 0, capacity - nextFirst - 1);
+        System.arraycopy(items, 0, a, capacity - nextFirst - 1,
+                size + nextFirst + 1 - capacity);
         items = a;
-        nextFirst = size + index + 1;
+        capacity = newCapacity;
+        nextFirst = capacity - 1;
+        nextLast = size;
     }
 
-    public void shrinkArray(int index) {
-        T[] a = (T[]) new Object[capacity / REFACTOR_SIZE];
-        System.arraycopy(items, 0, a, 0, index);
-        System.arraycopy(items, index + 1, a,
-                size + index + 2, size - index);
-        items = a;
-        nextFirst = size + index + 1;
+    public void expandArray() {
+        reshape(capacity * REFACTOR_SIZE);
+    }
+
+    public void shrinkArray() {
+        reshape(capacity / REFACTOR_SIZE);
     }
 
     public void addFirst(T x) {
         items[nextFirst] = x;
         nextFirst = decrement(nextFirst);
         size++;
-        if (almostFull()) {
-            expandArray(nextFirst);
+        if (isFull()) {
+            expandArray();
         }
     }
 
@@ -59,8 +58,8 @@ public class ArrayDeque<T> {
         items[nextLast] = x;
         nextLast = increment(nextLast);
         size++;
-        if (almostFull()) {
-            expandArray(nextLast);
+        if (isFull()) {
+            expandArray();
         }
     }
 
@@ -72,7 +71,7 @@ public class ArrayDeque<T> {
         items[nextFirst] = null;
         size--;
         if (isSparse()) {
-            shrinkArray(nextFirst);
+            shrinkArray();
         }
     }
 
@@ -84,7 +83,7 @@ public class ArrayDeque<T> {
         items[nextLast] = null;
         size--;
         if (isSparse()) {
-            shrinkArray(nextLast);
+            shrinkArray();
         }
     }
 
@@ -112,12 +111,12 @@ public class ArrayDeque<T> {
         return size == 0;
     }
 
-    public boolean almostFull() {
-        return size == capacity - 1;
+    public boolean isFull() {
+        return size == capacity;
     }
 
     public boolean isSparse() {
-        return size > CAPACITY_BASE && size < (capacity * USAGE_RATIO);
+        return capacity > CAPACITY_BASE && size < (capacity * USAGE_RATIO);
     }
 
     public int decrement(int x) {
@@ -136,6 +135,7 @@ public class ArrayDeque<T> {
         }
     }
 
+    /** Test if methods work */
     public static void main(String[] args) {
         ArrayDeque test = new ArrayDeque();
         String[] input = new String[]{"a", "b", "c", "d", "e", "f",
@@ -166,6 +166,11 @@ public class ArrayDeque<T> {
 
         for (int i = 0; i < leftStack.size; i++) {
             rightStack.addLast(leftStack.get(i));
+        }
+        rightStack.printDeque();
+
+        for (int i = 0; i < 16; i++) {
+            rightStack.removeLast();
         }
         rightStack.printDeque();
 
