@@ -12,7 +12,7 @@ public class Palindrome {
         return word.equals(reversed(deque));
     }
 
-    public String reversed(Deque d) {
+    private String reversed(Deque d) {
         if (d.isEmpty()) {
             return "";
         }
