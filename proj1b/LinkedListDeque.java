@@ -1,8 +1,8 @@
 public class LinkedListDeque<T> implements Deque<T> {
     private class DequeNode {
-        public T item;
-        public DequeNode prev;
-        public DequeNode next;
+        private T item;
+        private DequeNode prev;
+        private DequeNode next;
 
         public DequeNode() {
             this(null, null, null);
@@ -15,8 +15,8 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
-    public DequeNode sentinel;
-    public int size;
+    private DequeNode sentinel;
+    private int size;
 
     public LinkedListDeque() {
         sentinel = new DequeNode();
