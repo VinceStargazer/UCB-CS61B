@@ -8,16 +8,16 @@ public class ArrayDeque<T> {
     private int CAPACITY_BASE = 8;
     private double USAGE_RATIO = 0.25;
 
-    public ArrayDeque() {
+    ArrayDeque() {
         this(8);
     }
 
-    public ArrayDeque(int capacity) {
+    ArrayDeque(int capacity) {
         items = (T[]) new Object[capacity];
         this.capacity = capacity;
     }
 
-    public ArrayDeque(ArrayDeque other) {
+    ArrayDeque(ArrayDeque other) {
         this(other.capacity);
         for (int i = 0; i < other.size(); i++) {
             addLast((T) other.get(i));
@@ -75,8 +75,7 @@ public class ArrayDeque<T> {
     public T get(int index) {
         if (size > index + nextLast) {
             return items[index + nextFirst + 1];
-        }
-        else {
+        } else {
             return items[index + nextLast - size];
         }
     }
@@ -96,15 +95,15 @@ public class ArrayDeque<T> {
         return size == 0;
     }
 
-    public boolean isFull() {
+    private boolean isFull() {
         return size == capacity;
     }
 
-    public boolean isSparse() {
+    private boolean isSparse() {
         return capacity > CAPACITY_BASE && size < (capacity * USAGE_RATIO);
     }
 
-    public void reshape(int newCapacity) {
+    private void reshape(int newCapacity) {
         T[] a = (T[]) new Object[newCapacity];
         if (nextFirst < nextLast && !isFull()) {
             System.arraycopy(items, nextFirst + 1, a, 0, size);
@@ -119,15 +118,15 @@ public class ArrayDeque<T> {
         nextLast = size;
     }
 
-    public void expandArray() {
+    private void expandArray() {
         reshape(capacity * REFACTOR_SIZE);
     }
 
-    public void shrinkArray() {
+    private void shrinkArray() {
         reshape(capacity / REFACTOR_SIZE);
     }
 
-    public int decrement(int x) {
+    private int decrement(int x) {
         if (x == 0) {
             return capacity - 1;
         } else {
@@ -135,7 +134,7 @@ public class ArrayDeque<T> {
         }
     }
 
-    public int increment(int x) {
+    private int increment(int x) {
         if (x == capacity - 1) {
             return 0;
         } else {
@@ -143,11 +142,10 @@ public class ArrayDeque<T> {
         }
     }
 
-    /** Test if methods work */
-    public static void main(String[] args) {
+    /** Test if methods work. Change "private" to "public" to work. */
+    private static void main(String[] args) {
         ArrayDeque test = new ArrayDeque();
-        String[] input = new String[]{"a", "b", "c", "d", "e", "f",
-                "g", "h", "i", "j", "k", "l", "m", "n"};
+        String[] input = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"};
         for (int i = 0; i < input.length; i++) {
             if (i % 2 == 0) {
                 test.addLast(input[i]);
@@ -155,8 +153,6 @@ public class ArrayDeque<T> {
                 test.addFirst(input[i]);
             }
         }
-        test.removeFirst();
-        test.removeLast();
         test.printDeque();
 
         ArrayDeque leftStack = new ArrayDeque(test);

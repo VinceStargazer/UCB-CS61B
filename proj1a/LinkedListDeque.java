@@ -1,38 +1,38 @@
 public class LinkedListDeque<T> {
     private class DequeNode {
-        public T item;
-        public DequeNode prev;
-        public DequeNode next;
+        private T item;
+        private DequeNode prev;
+        private DequeNode next;
 
-        public DequeNode() {
+        DequeNode() {
             this(null, null, null);
         }
 
-        public DequeNode(DequeNode p, T i, DequeNode n) {
+        DequeNode(DequeNode p, T i, DequeNode n) {
             prev = p;
             item = i;
             next = n;
         }
     }
 
-    public DequeNode sentinel;
-    public int size;
+    private DequeNode sentinel;
+    private int size;
 
-    public LinkedListDeque() {
+    LinkedListDeque() {
         sentinel = new DequeNode();
         sentinel.next = sentinel;
         sentinel.prev = sentinel;
         size = 0;
     }
 
-    public LinkedListDeque(T x) {
+    LinkedListDeque(T x) {
         sentinel = new DequeNode();
         sentinel.next = new DequeNode(sentinel, x, sentinel);
         sentinel.prev = sentinel.next;
         size = 1;
     }
 
-    public LinkedListDeque(LinkedListDeque other) {
+    LinkedListDeque(LinkedListDeque other) {
         this();
         for (int i = 0; i < other.size(); i++) {
             addLast((T) other.get(i));
@@ -105,7 +105,8 @@ public class LinkedListDeque<T> {
         return size == 0;
     }
 
-    public static void main(String[] args) {
+    /** Test if methods work. Change "private" to "public" to work. */
+    private static void main(String[] args) {
         LinkedListDeque<Integer> deque = new LinkedListDeque<>(6);
         deque.addFirst(3);
         deque.addLast(9);
