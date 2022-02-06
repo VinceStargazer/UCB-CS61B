@@ -1,4 +1,4 @@
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Deque<T> {
     private class DequeNode {
         public T item;
         public DequeNode prev;
@@ -39,30 +39,39 @@ public class LinkedListDeque<T> {
         }
     }
 
+    @Override
     public void addFirst(T x) {
         sentinel.next = new DequeNode(sentinel, x, sentinel.next);
         sentinel.next.next.prev = sentinel.next;
         size += 1;
     }
 
+    @Override
     public void addLast(T x) {
         sentinel.prev = new DequeNode(sentinel.prev, x, sentinel);
         sentinel.prev.prev.next = sentinel.prev;
         size += 1;
     }
 
-    public void removeFirst() {
+    @Override
+    public T removeFirst() {
+        T first = sentinel.next.item;
         sentinel.next = sentinel.next.next;
         sentinel.next.prev = sentinel;
         size -= 1;
+        return first;
     }
 
-    public void removeLast() {
+    @Override
+    public T removeLast() {
+        T last = sentinel.prev.item;
         sentinel.prev = sentinel.prev.prev;
         sentinel.prev.next = sentinel;
         size -= 1;
+        return last;
     }
 
+    @Override
     public T get(int x) {
         DequeNode node = sentinel.next;
         while (node != sentinel) {
@@ -86,6 +95,7 @@ public class LinkedListDeque<T> {
         return (T) other.getRecursive(index - 1);
     }
 
+    @Override
     public void printDeque() {
         for (int i = 0; i < size; i++) {
             System.out.print(get(i) + " ");
@@ -93,12 +103,9 @@ public class LinkedListDeque<T> {
         System.out.println();
     }
 
+    @Override
     public int size() {
         return size;
-    }
-
-    public boolean isEmpty() {
-        return size == 0;
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-public class ArrayDeque<T> {
+public class ArrayDeque<T> implements Deque<T> {
     private T[] items;
     private int capacity;
     private int nextFirst = 7;
@@ -26,11 +26,96 @@ public class ArrayDeque<T> {
         nextLast = size;
     }
 
+    @Override
+    public void addFirst(T x) {
+        items[nextFirst] = x;
+        nextFirst = decrement(nextFirst);
+        size++;
+        if (isFull()) {
+            expandArray();
+        }
+    }
+
+    @Override
+    public void addLast(T x) {
+        items[nextLast] = x;
+        nextLast = increment(nextLast);
+        size++;
+        if (isFull()) {
+            expandArray();
+        }
+    }
+
+    @Override
+    public T removeFirst() {
+        if (isEmpty()) {
+            return null;
+        }
+        nextFirst = increment(nextFirst);
+        T first = items[nextFirst];
+        items[nextFirst] = null;
+        size--;
+        if (isSparse()) {
+            shrinkArray();
+        }
+        return first;
+    }
+
+    @Override
+    public T removeLast() {
+        if (isEmpty()) {
+            return null;
+        }
+        nextLast = decrement(nextLast);
+        T last = items[nextLast];
+        items[nextLast] = null;
+        size--;
+        if (isSparse()) {
+            shrinkArray();
+        }
+        return last;
+    }
+
+    @Override
+    public T get(int index) {
+        if (size > index + nextLast) {
+            return items[index + nextFirst + 1];
+        }
+        else {
+            return items[index + nextLast - size];
+        }
+    }
+
+    @Override
+    public void printDeque() {
+        for (int i = 0; i < size; i++) {
+            System.out.print(get(i) + " ");
+        }
+        System.out.println();
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    public boolean isFull() {
+        return size == capacity;
+    }
+
+    public boolean isSparse() {
+        return capacity > CAPACITY_BASE && size < (capacity * USAGE_RATIO);
+    }
+
     public void reshape(int newCapacity) {
         T[] a = (T[]) new Object[newCapacity];
-        System.arraycopy(items, nextFirst + 1, a, 0, capacity - nextFirst - 1);
-        System.arraycopy(items, 0, a, capacity - nextFirst - 1,
-                size + nextFirst + 1 - capacity);
+        if (nextFirst < nextLast && !isFull()) {
+            System.arraycopy(items, nextFirst + 1, a, 0, size);
+        } else {
+            System.arraycopy(items, nextFirst + 1, a, 0, capacity - nextFirst - 1);
+            System.arraycopy(items, 0, a, capacity - nextFirst - 1,
+                    size + nextFirst + 1 - capacity);
+        }
         items = a;
         capacity = newCapacity;
         nextFirst = capacity - 1;
@@ -43,80 +128,6 @@ public class ArrayDeque<T> {
 
     public void shrinkArray() {
         reshape(capacity / REFACTOR_SIZE);
-    }
-
-    public void addFirst(T x) {
-        items[nextFirst] = x;
-        nextFirst = decrement(nextFirst);
-        size++;
-        if (isFull()) {
-            expandArray();
-        }
-    }
-
-    public void addLast(T x) {
-        items[nextLast] = x;
-        nextLast = increment(nextLast);
-        size++;
-        if (isFull()) {
-            expandArray();
-        }
-    }
-
-    public void removeFirst() {
-        if (isEmpty()) {
-            return;
-        }
-        nextFirst = increment(nextFirst);
-        items[nextFirst] = null;
-        size--;
-        if (isSparse()) {
-            shrinkArray();
-        }
-    }
-
-    public void removeLast() {
-        if (isEmpty()) {
-            return;
-        }
-        nextLast = decrement(nextLast);
-        items[nextLast] = null;
-        size--;
-        if (isSparse()) {
-            shrinkArray();
-        }
-    }
-
-    public T get(int index) {
-        if (size > index + nextLast) {
-            return items[index + nextFirst + 1];
-        }
-        else {
-            return items[index + nextLast - size];
-        }
-    }
-
-    public void printDeque() {
-        for (int i = 0; i < size; i++) {
-            System.out.print(get(i) + " ");
-        }
-        System.out.println();
-    }
-
-    public int size() {
-        return size;
-    }
-
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    public boolean isFull() {
-        return size == capacity;
-    }
-
-    public boolean isSparse() {
-        return capacity > CAPACITY_BASE && size < (capacity * USAGE_RATIO);
     }
 
     public int decrement(int x) {
