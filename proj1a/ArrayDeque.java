@@ -1,4 +1,4 @@
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> {
     private T[] items;
     private int capacity;
     private int nextFirst = 7;
@@ -26,7 +26,6 @@ public class ArrayDeque<T> implements Deque<T> {
         nextLast = size;
     }
 
-    @Override
     public void addFirst(T x) {
         items[nextFirst] = x;
         nextFirst = decrement(nextFirst);
@@ -36,7 +35,6 @@ public class ArrayDeque<T> implements Deque<T> {
         }
     }
 
-    @Override
     public void addLast(T x) {
         items[nextLast] = x;
         nextLast = increment(nextLast);
@@ -46,7 +44,6 @@ public class ArrayDeque<T> implements Deque<T> {
         }
     }
 
-    @Override
     public T removeFirst() {
         if (isEmpty()) {
             return null;
@@ -61,7 +58,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return first;
     }
 
-    @Override
     public T removeLast() {
         if (isEmpty()) {
             return null;
@@ -76,7 +72,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return last;
     }
 
-    @Override
     public T get(int index) {
         if (size > index + nextLast) {
             return items[index + nextFirst + 1];
@@ -86,7 +81,6 @@ public class ArrayDeque<T> implements Deque<T> {
         }
     }
 
-    @Override
     public void printDeque() {
         for (int i = 0; i < size; i++) {
             System.out.print(get(i) + " ");
@@ -94,9 +88,12 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println();
     }
 
-    @Override
     public int size() {
         return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
     }
 
     public boolean isFull() {
