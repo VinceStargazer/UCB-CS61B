@@ -8,7 +8,7 @@ public class ArrayDeque<T> {
     private int CAPACITY_BASE = 8;
     private double USAGE_RATIO = 0.25;
 
-    ArrayDeque() {
+    public ArrayDeque() {
         this(8);
     }
 
