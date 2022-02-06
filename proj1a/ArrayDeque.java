@@ -12,12 +12,12 @@ public class ArrayDeque<T> {
         this(8);
     }
 
-    ArrayDeque(int capacity) {
+    public ArrayDeque(int capacity) {
         items = (T[]) new Object[capacity];
         this.capacity = capacity;
     }
 
-    ArrayDeque(ArrayDeque other) {
+    public ArrayDeque(ArrayDeque other) {
         this(other.capacity);
         for (int i = 0; i < other.size(); i++) {
             addLast((T) other.get(i));
