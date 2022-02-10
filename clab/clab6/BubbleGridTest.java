@@ -18,4 +18,17 @@ public class BubbleGridTest {
         BubbleGrid sol = new BubbleGrid(grid);
         assertArrayEquals(expected, sol.popBubbles(darts));
     }
+
+    @Test
+    public void testExample() {
+        int[][] grid = {{1, 1, 0},
+                        {1, 0, 0},
+                        {1, 1, 0},
+                        {1, 1, 1}};
+        int[][] darts = {{2, 2}, {2, 0}};
+        int[] expected = {0, 4};
+        BubbleGrid sol = new BubbleGrid(grid);
+        int[] actual = sol.popBubbles(darts);
+        assertArrayEquals(expected, actual);
+    }
 }
