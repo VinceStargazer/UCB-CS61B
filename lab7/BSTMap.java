@@ -154,25 +154,4 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
         }
         return returnVal;
     }
-
-    public static void main(String[] args) {
-        BSTMap<Integer, Character> test = new BSTMap<>();
-        test.put(5, 'a');
-        test.put(2, 'b');
-        test.put(6, 'c');
-        test.put(1, 'e');
-        test.put(3, 'f');
-        test.put(4, 'g');
-        test.put(7, 'd');
-        test.printInOrder();
-        BSTMap<Integer, Character> emptyMap = new BSTMap<>();
-        emptyMap.printInOrder();
-        System.out.println(test.size());
-        System.out.println(test.remove(7));
-        for (int i : test) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
-    }
-
 }
