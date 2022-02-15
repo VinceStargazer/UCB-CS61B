@@ -1,0 +1,13 @@
+Please enter desired length of each string: 1000
+
+Enter # strings to insert into the maps: 1000
+class ULLMap: 0.16 sec
+class BSTMap: 0.05 sec
+Java's Built-in TreeMap: 0.06 sec
+
+Would you like to try more timed-tests? (y/n)y
+
+Enter # strings to insert into the maps: 10000
+class ULLMap: 4.37 sec
+class BSTMap: 0.48 sec
+Java's Built-in TreeMap: 0.47 sec
