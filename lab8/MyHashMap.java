@@ -129,6 +129,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return returnVal;
     }
 
+    /** Remove the mapping of key in the corresponding entry bucket */
     private void remove(Entry<K, V> entry, K key, int index) {
         if (entry.key.equals(key) && entry.next == null) {
             buckets.set(index, null);
@@ -159,7 +160,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return keySet().iterator();
     }
 
-    /** Find the entry bucket that likely includes the key */
+    /** Find the entry bucket that includes the key */
     private int findIndex(K key) {
         return Math.floorMod(key.hashCode(), buckets.size());
     }
