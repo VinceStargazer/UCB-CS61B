@@ -1,0 +1,28 @@
+Random Speed Test:
+
+ This program inserts random Strings of length 10
+ Into different types of maps as <String, Integer> pairs.
+
+Enter 10,000 strings to insert into:
+ULLMap: 1.16 sec
+MyHashMap: 0.10 sec
+Java's Built-in HashMap: 0.01 sec
+
+Enter 100,000 strings to insert into:
+ULLMap: --Stack Overflow -- couldn't add 100000 strings of length 10.
+MyHashMap: 0.58 sec
+Java's Built-in HashMap: 0.20 sec
+
+
+In-order Speed Test
+This program inserts lexicographically increasing Stringsinto Maps as <String, Integer> pairs.
+
+Enter 10,000 strings to insert into:
+ULLMap: 3.78 sec
+MyHashMap: 0.10 sec
+Java's Built-in HashMap: 0.02 sec
+
+Enter 100,000 strings to insert into: 
+ULLMap: --Stack Overflow -- couldn't add 100000 strings.
+MyHashMap: 0.41 sec
+Java's Built-in HashMap: 0.22 sec
