@@ -59,8 +59,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public V get(K key) {
-        int index = Math.floorMod(key.hashCode(), buckets.size());
-        return get(buckets.get(index), key);
+        return get(buckets.get(findIndex(key)), key);
     }
 
     /** Get the corresponding value to key from a certain bucket */
@@ -80,7 +79,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public void put(K key, V value) {
-        int index = Math.floorMod(key.hashCode(), buckets.size());
+        int index = findIndex(key);
         if (!containsKey(key)) {
             buckets.set(index, new Entry<>(key, value, buckets.get(index)));
             size++;
@@ -121,18 +120,30 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public V remove(K key) {
-        if (!containsKey(key)) {
-            return null;
-        }
         V returnVal = get(key);
-        MyHashMap<K, V> newMap = new MyHashMap<>(buckets.size());
-        for (K k : this) {
-            if (!k.equals(key)) {
-                newMap.put(k, get(k));
-            }
+        int index = findIndex(key);
+        Entry<K, V> entry = buckets.get(index);
+        if (entry != null) {
+            remove(entry, key, index);
         }
-        copyMap(newMap);
         return returnVal;
+    }
+
+    private void remove(Entry<K, V> entry, K key, int index) {
+        if (entry.key.equals(key) && entry.next == null) {
+            buckets.set(index, null);
+        } else if (entry.key.equals(key)) {
+            copyEntry(entry, entry.next);
+        } else {
+            Entry<K, V> newEntry = new Entry<>(entry.key, entry.value, null);
+            while (entry.next != null) {
+                if (!entry.next.key.equals(key)) {
+                    newEntry.next = entry.next;
+                }
+                entry = entry.next;
+            }
+            buckets.set(index, newEntry);
+        }
     }
 
     @Override
@@ -146,6 +157,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     @Override
     public Iterator<K> iterator() {
         return keySet().iterator();
+    }
+
+    /** Find the entry bucket that likely includes the key */
+    private int findIndex(K key) {
+        return Math.floorMod(key.hashCode(), buckets.size());
     }
 
     /** Double the size of buckets and put all items into new ones */
@@ -162,5 +178,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         size = map.size;
         loadFactor = map.loadFactor;
         buckets = map.buckets;
+    }
+
+    /** Turn entry1 into a duplicate of entry2 */
+    private void copyEntry(Entry<K, V> entry1, Entry<K, V> entry2) {
+        entry1.key = entry2.key;
+        entry1.value = entry2.value;
+        entry1.next = entry2.next;
     }
 }
