@@ -52,12 +52,31 @@ public class TestMyTrieSet {
         for (String s: otherStrings) {
             assertFalse(keys.contains(s));
         }
+
+        String prefix = t.longestPrefixOf("sample");
+        String prefix2 = t.longestPrefixOf("girl");
+        assertEquals("sam", prefix);
+        assertNull(prefix2);
     }
 
-    public static void main(String[] args) {
-        jh61b.junit.TestRunner.runTests(TestMyTrieSet.class);
+    // assumes collect and keysWithPrefix works
+    @Test
+    public void sanityCollectTest() {
+        MyTrieSet t = new MyTrieSet();
+        String[] inputs = new String[]{"hello", "hi", "help", "zebra"};
+        for (String input : inputs) {
+            t.add(input);
+        }
+
+        List<String> collection = t.collect();
+        List<String> prefixCollection = t.keysWithPrefix("he");
+
+        for (String input : inputs) {
+            assertTrue(collection.contains(input));
+        }
+
+        assertTrue(prefixCollection.contains("help"));
+        assertFalse(prefixCollection.contains("zebra"));
     }
-
-
 
 }
