@@ -85,7 +85,7 @@ public class MyTrieSet implements TrieSet61B {
         }
     }
 
-    /** Help collection the string set where certain rule applies */
+    /** Help collect the string set where certain rule applies */
     private List<String> colHelp(String s, ArrayList<String> x, Node curr) {
         if (curr.isKey) {
             x.add(s);
