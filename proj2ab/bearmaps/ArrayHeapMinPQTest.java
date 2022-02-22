@@ -70,79 +70,71 @@ public class ArrayHeapMinPQTest {
         for (int i = 0; i < 1_000_000; i++) {
             test.add(i, 1_000_000 - i);
         }
-        System.out.println("ArrayHeapMinPQ adds 1 mil items: " +
-                sw.elapsedTime() +  " seconds.");
+        timerPrint("ArrayHeapMinPQ adds 1 mil items: ", sw, false);
 
         sw = new Stopwatch();
         for (int i = 0; i < 1_000_000; i++) {
             test2.add(i, 1_000_000 - i);
         }
-        System.out.println("NaiveMinPQ adds 1 mil items:  " +
-                sw.elapsedTime() +  " seconds.");
-        System.out.println();
+        timerPrint("NaiveMinPQ adds 1 mil items:  ", sw, true);
 
         // getSmallest speed test
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test.getSmallest();
         }
-        System.out.println("ArrayHeapMinPQ runs getSmallest 1k times: " +
-                sw.elapsedTime() +  " seconds.");
+        timerPrint("ArrayHeapMinPQ runs getSmallest 1k times: ", sw, false);
 
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test2.getSmallest();
         }
-        System.out.println("NaiveMinPQ runs getSmallest 1k times: " +
-                sw.elapsedTime() +  " seconds.");
-        System.out.println();
+        timerPrint("NaiveMinPQ runs getSmallest 1k times: ", sw, true);
 
         // removeSmallest speed test
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test.removeSmallest();
         }
-        System.out.println("ArrayHeapMinPQ runs removeSmallest 1k times: " +
-                sw.elapsedTime() +  " seconds.");
+        timerPrint("ArrayHeapMinPQ runs removeSmallest 1k times: ", sw, false);
 
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test2.removeSmallest();
         }
-        System.out.println("NaiveMinPQ runs removeSmallest 1k times: " +
-                sw.elapsedTime() +  " seconds.");
-        System.out.println();
+        timerPrint("NaiveMinPQ runs removeSmallest 1k times: ", sw, true);
 
         // contains speed test
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test.contains(i);
         }
-        System.out.println("ArrayHeapMinPQ runs contains 1k times: " +
-                sw.elapsedTime() +  " seconds.");
+        timerPrint("ArrayHeapMinPQ runs contains 1k times: ", sw, false);
 
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test2.contains(i);
         }
-        System.out.println("NaiveMinPQ runs contains 1k times: " +
-                sw.elapsedTime() +  " seconds.");
-        System.out.println();
+        timerPrint("NaiveMinPQ runs contains 1k times: ", sw, true);
 
         // changePriority speed test
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test.changePriority(i, i);
         }
-        System.out.println("ArrayHeapMinPQ runs changePriority 1k times: " +
-                sw.elapsedTime() +  " seconds.");
+        timerPrint("ArrayHeapMinPQ runs changePriority 1k times: ", sw, false);
 
         sw = new Stopwatch();
         for (int i = 0; i < 1000; i++) {
             test2.changePriority(i, i);
         }
-        System.out.println("NaiveMinPQ runs changePriority 1k times: " +
-                sw.elapsedTime() +  " seconds.");
-        System.out.println();
+        timerPrint("NaiveMinPQ runs changePriority 1k times: ", sw, true);
+    }
+
+    private static void timerPrint(String s, Stopwatch sw, boolean newLine) {
+        System.out.println(s + sw.elapsedTime() +  " seconds.");
+        if (newLine) {
+            System.out.println();
+        }
     }
 }

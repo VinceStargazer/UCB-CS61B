@@ -1,0 +1,14 @@
+ArrayHeapMinPQ adds 1 mil items: 5.944 seconds.
+NaiveMinPQ adds 1 mil items:  0.215 seconds.
+
+ArrayHeapMinPQ runs getSmallest 1k times: 0.0 seconds.
+NaiveMinPQ runs getSmallest 1k times: 10.035 seconds.
+
+ArrayHeapMinPQ runs removeSmallest 1k times: 0.015 seconds.
+NaiveMinPQ runs removeSmallest 1k times: 19.454 seconds.
+
+ArrayHeapMinPQ runs contains 1k times: 0.001 seconds.
+NaiveMinPQ runs contains 1k times: 0.003 seconds.
+
+ArrayHeapMinPQ runs changePriority 1k times: 0.023 seconds.
+NaiveMinPQ runs changePriority 1k times: 0.006 seconds.

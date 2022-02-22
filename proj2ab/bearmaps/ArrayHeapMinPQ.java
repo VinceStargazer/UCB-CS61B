@@ -1,6 +1,8 @@
 package bearmaps;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
 
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     private final ArrayList<PriorityNode> items;
@@ -135,7 +137,9 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
             if (rightChild(k) <= size && greater(leftChild(k), rightChild(k))) {
                 smallerChild = rightChild(k);
             }
-            if (!greater(k, smallerChild)) break;
+            if (!greater(k, smallerChild)) {
+                break;
+            }
             swap(k, smallerChild);
             k = smallerChild;
         }
