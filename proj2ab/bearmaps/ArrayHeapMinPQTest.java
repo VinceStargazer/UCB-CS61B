@@ -131,7 +131,7 @@ public class ArrayHeapMinPQTest {
         timerPrint("NaiveMinPQ runs changePriority 1k times: ", sw, true);
     }
 
-    private static void timerPrint(String s, Stopwatch sw, boolean newLine) {
+    public static void timerPrint(String s, Stopwatch sw, boolean newLine) {
         System.out.println(s + sw.elapsedTime() +  " seconds.");
         if (newLine) {
             System.out.println();

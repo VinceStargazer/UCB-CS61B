@@ -12,3 +12,10 @@ NaiveMinPQ runs contains 1k times: 0.003 seconds.
 
 ArrayHeapMinPQ runs changePriority 1k times: 0.023 seconds.
 NaiveMinPQ runs changePriority 1k times: 0.006 seconds.
+
+
+KDTree adds 100000 items: 0.468 seconds.
+NPS adds 100000 items: 0.005 seconds.
+
+KDTree runs nearest 10000 times: 0.193 seconds.
+NPS runs nearest 10000 times: 17.789 seconds.
