@@ -111,8 +111,10 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         return k / 2;
     }
 
+    /** Clear all items and re-initialize */
     private void clear() {
         items = new ArrayList<>();
+        size = 0;
         dict = new HashMap<>();
         items.add(new PriorityNode());
     }

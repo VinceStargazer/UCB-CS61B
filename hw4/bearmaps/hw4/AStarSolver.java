@@ -3,48 +3,54 @@ package bearmaps.hw4;
 import bearmaps.proj2ab.ArrayHeapMinPQ;
 import edu.princeton.cs.algs4.Stopwatch;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
-    private final AStarGraph<Vertex> input;
-    private final ArrayHeapMinPQ<Vertex> fringe;
+    private int numStatesExplored;
     private final Vertex goal;
+    private final AStarGraph<Vertex> graph;
     private final SolverOutcome outcome;
-    private final List<Vertex> solution = new ArrayList<>();
-    private int numNodes;
-    private final double timeSpent;
+    private final double explorationTime;
+    private final ArrayHeapMinPQ<Vertex> fringe = new ArrayHeapMinPQ<>();
+    private final LinkedList<Vertex> solution = new LinkedList<>();
     private final HashMap<Vertex, Double> distTo = new HashMap<>();
+    private final HashMap<Vertex, Vertex> edgeTo = new HashMap<>();
 
     public AStarSolver(AStarGraph<Vertex> input, Vertex start, Vertex end, double timeout) {
         Stopwatch sw = new Stopwatch();
-        this.input = input;
+        graph = input;
         goal = end;
-        fringe = new ArrayHeapMinPQ<>();
         distTo.put(start, 0.0);
         fringe.add(start, h(start, end));
-        while (!fringe.isEmpty()) {
+
+        while (fringe.size() > 0) {
             if (fringe.getSmallest().equals(end)) {
                 outcome = SolverOutcome.SOLVED;
-                solution.add(end);
-                numNodes++;
-                timeSpent = sw.elapsedTime();
+                Vertex curr = goal;
+                while (!curr.equals(start)) {
+                    solution.addFirst(curr);
+                    curr = edgeTo.get(curr);
+                }
+                solution.addFirst(start);
+                explorationTime = sw.elapsedTime();
                 return;
-            } else if (false) {
+            } else if (sw.elapsedTime() > timeout) {
                 outcome = SolverOutcome.TIMEOUT;
-                timeSpent = sw.elapsedTime();
+                explorationTime = sw.elapsedTime();
                 return;
             }
-            Vertex p = fringe.removeSmallest();
-            numNodes++;
-            solution.add(p);
-            for (WeightedEdge<Vertex> e : input.neighbors(p)) {
+
+            Vertex curr = fringe.removeSmallest();
+            numStatesExplored++;
+            for (WeightedEdge<Vertex> e : input.neighbors(curr)) {
                 relax(e);
             }
         }
+
         outcome = SolverOutcome.UNSOLVABLE;
-        timeSpent = sw.elapsedTime();
+        explorationTime = sw.elapsedTime();
     }
 
     @Override
@@ -54,9 +60,6 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
 
     @Override
     public List<Vertex> solution() {
-        if (outcome.equals(SolverOutcome.UNSOLVABLE) || outcome.equals(SolverOutcome.TIMEOUT)) {
-            return new ArrayList<>();
-        }
         return solution;
     }
 
@@ -70,14 +73,15 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
 
     @Override
     public int numStatesExplored() {
-        return numNodes;
+        return numStatesExplored;
     }
 
     @Override
     public double explorationTime() {
-        return timeSpent;
+        return explorationTime;
     }
 
+    /** Relax a certain edge by assigning/reassigning priority */
     private void relax(WeightedEdge<Vertex> e) {
         Vertex p = e.from();
         Vertex q = e.to();
@@ -85,6 +89,11 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
         if (!distTo.containsKey(q)) {
             distTo.put(q, Double.MAX_VALUE);
         }
+
+        if (!edgeTo.containsKey(q)) {
+            edgeTo.put(q, p);
+        }
+
         if (distTo.get(p) + w < distTo.get(q)) {
             distTo.replace(q, distTo.get(p) + w);
             if (fringe.contains(q)) {
@@ -95,7 +104,8 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
         }
     }
 
-    private double h(Vertex v, Vertex goal) {
-        return input.estimatedDistanceToGoal(v, goal);
+    /** Heuristic to estimate the distance from v to goal */
+    private double h(Vertex v, Vertex g) {
+        return graph.estimatedDistanceToGoal(v, g);
     }
 }
