@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.Stopwatch;
 import java.util.List;
 
 /**
- * Very basic syntatically correct but semantically incorrect shortest paths solver.
+ * Very basic syntactically correct but semantically incorrect shortest paths solver.
  * It tries the first edge it sees and if that edge doesn't work, it gives up
  * and (incorrectly) says the task is UNSOLVABLE.
  * Created by hug.

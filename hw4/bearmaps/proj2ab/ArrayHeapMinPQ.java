@@ -1,13 +1,13 @@
-package bearmaps;
+package bearmaps.proj2ab;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
-    private final ArrayList<PriorityNode> items;
+    private ArrayList<PriorityNode> items;
     private int size;
-    private final HashMap<T, Integer> dict;
+    private HashMap<T, Integer> dict;
 
     private class PriorityNode implements Comparable<PriorityNode> {
         private final T item;
@@ -40,13 +40,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
     public ArrayHeapMinPQ() {
-        this(1);
-    }
-
-    public ArrayHeapMinPQ(int initCapacity) {
-        items = new ArrayList<>(initCapacity);
-        dict = new HashMap<>();
-        items.add(new PriorityNode());
+        clear();
     }
 
     @Override
@@ -101,7 +95,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         sink(k);
     }
 
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return size == 0;
     }
 
@@ -115,6 +109,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private int parent(int k) {
         return k / 2;
+    }
+
+    private void clear() {
+        items = new ArrayList<>();
+        dict = new HashMap<>();
+        items.add(new PriorityNode());
     }
 
     /** To compare between priorities of two items */
@@ -164,17 +164,5 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
             array[i] = items.get(i).getItem();
         }
         return array;
-    }
-
-    /** Visualize some test output */
-    public static void main(String[] args) {
-        ArrayHeapMinPQ<Character> test = new ArrayHeapMinPQ<>();
-        String input = "abcdefg";
-        for (int i = 0; i < input.length(); i++) {
-            test.add(input.charAt(i), input.length() - i);
-        }
-        PrintHeapDemo.printFancyHeapDrawing(test.toArray());
-        test.removeSmallest();
-        PrintHeapDemo.printFancyHeapDrawing(test.toArray());
     }
 }
