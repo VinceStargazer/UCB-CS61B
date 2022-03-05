@@ -1,5 +1,10 @@
 package bearmaps.proj2c;
 
+import bearmaps.hw4.AStarSolver;
+import bearmaps.hw4.WeightedEdge;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -24,10 +29,9 @@ public class Router {
      */
     public static List<Long> shortestPath(AugmentedStreetMapGraph g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        //long src = g.closest(stlon, stlat);
-        //long dest = g.closest(destlon, destlat);
-        //return new WeirdSolver<>(g, src, dest, 20).solution();
-        return null;
+        long src = g.closest(stlon, stlat);
+        long dest = g.closest(destlon, destlat);
+        return new AStarSolver<>(g, src, dest, 20).solution();
     }
 
     /**
@@ -35,12 +39,77 @@ public class Router {
      * @param g The graph to use.
      * @param route The route to translate into directions. Each element
      *              corresponds to a node from the graph in the route.
-     * @return A list of NavigatiionDirection objects corresponding to the input
+     * @return A list of NavigationDirection objects corresponding to the input
      * route.
      */
     public static List<NavigationDirection> routeDirections(AugmentedStreetMapGraph g, List<Long> route) {
-        /* fill in for part IV */
-        return null;
+        if (route == null || route.size() < 2) {
+            return null;
+        }
+
+        List<NavigationDirection> results = new ArrayList<>();
+        Iterator<Long> routeIter = route.iterator();
+        long pre = routeIter.next();
+        long curr = routeIter.next();
+        NavigationDirection nd = new NavigationDirection();
+        nd.direction = NavigationDirection.START;
+        WeightedEdge<Long> we = getEdge(g, pre, curr);
+        nd.way = getWayName(we);
+        nd.distance = we.weight();
+
+        if (!routeIter.hasNext()) {
+            results.add(nd);
+            return results;
+        }
+
+        while (routeIter.hasNext()) {
+            long next = routeIter.next();
+            we = getEdge(g, curr, next);
+
+            if ((we.getName() == null && !nd.way.equals(NavigationDirection.UNKNOWN_ROAD))
+                    || (we.getName() != null && !we.getName().equals(nd.way))) {
+                results.add(nd);
+                nd = new NavigationDirection();
+                nd.direction = NavigationDirection.getDirection(
+                        NavigationDirection.bearing(g.lon(pre), g.lon(curr), g.lat(pre), g.lat(curr)),
+                        NavigationDirection.bearing(g.lon(curr), g.lon(next), g.lat(curr), g.lat(next)));
+                nd.way = getWayName(we);
+                nd.distance = we.weight();
+            } else {
+                nd.distance += we.weight();
+            }
+
+            pre = curr;
+            curr = next;
+        }
+
+        results.add(nd);
+        return results;
+    }
+
+    /** Get the corresponding edge leading curr to next */
+    private static WeightedEdge<Long> getEdge(AugmentedStreetMapGraph g, long curr, long next) {
+        WeightedEdge<Long> we = null;
+        for (WeightedEdge<Long> edge : g.neighbors(curr)) {
+            if (edge.to().equals(next)) {
+                we = edge;
+                break;
+            }
+        }
+
+        if (we == null) {
+            throw new IllegalArgumentException("Invalid route");
+        }
+
+        return we;
+    }
+
+    /** Get the name associated with a certain edge */
+    private static String getWayName(WeightedEdge<Long> edge) {
+        if (edge.getName() == null) {
+            return NavigationDirection.UNKNOWN_ROAD;
+        }
+        return edge.getName();
     }
 
     /**
@@ -69,7 +138,7 @@ public class Router {
         /** Default name for an unknown way. */
         public static final String UNKNOWN_ROAD = "unknown road";
 
-        /** Static initializer. */
+        /* Static initializer. */
         static {
             DIRECTIONS[START] = "Start";
             DIRECTIONS[STRAIGHT] = "Go straight";

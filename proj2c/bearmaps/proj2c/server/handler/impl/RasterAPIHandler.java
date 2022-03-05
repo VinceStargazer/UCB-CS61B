@@ -12,10 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static bearmaps.proj2c.utils.Constants.SEMANTIC_STREET_GRAPH;
 import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
@@ -84,12 +82,108 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     @Override
     public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        //System.out.println(requestParams);
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser.");
+        int depth = findDepth(requestParams);
+        int[] gridsLon = findTileRangeX(requestParams);
+        int[] gridsLat = findTileRangeY(requestParams);
+        double tileLon = tileLengthX(requestParams);
+        double tileLat = tileLengthY(requestParams);
+        String[][] renderGrid = getFileArrays(gridsLon, gridsLat, depth);
+        double leftBound = Constants.ROOT_ULLON + tileLon * gridsLon[0];
+        double rightBound = leftBound + tileLon * gridsLon.length;
+        double upperBound = Constants.ROOT_ULLAT - tileLat * gridsLat[0];
+        double lowerBound = upperBound - tileLat * gridsLat.length;
+        results.put("render_grid", renderGrid);
+        results.put("raster_ul_lon", leftBound);
+        results.put("raster_ul_lat", upperBound);
+        results.put("raster_lr_lon", rightBound);
+        results.put("raster_lr_lat", lowerBound);
+        results.put("depth", depth);
+        results.put("query_success", true);
         return results;
+    }
+
+    private double findLonDPP(double ullon, double lrlon, double w) {
+        return (lrlon - ullon) / w;
+    }
+
+    private int findDepth(Map<String, Double> requestParams) {
+        double queryDPP = findLonDPP(requestParams.get("ullon"),
+                requestParams.get("lrlon"), requestParams.get("w"));
+        double currDPP = findLonDPP(Constants.ROOT_ULLON,
+                Constants.ROOT_LRLON, Constants.TILE_SIZE);
+        int depth = 0;
+        while (currDPP > queryDPP && depth < 7) {
+            currDPP /= 2;
+            depth++;
+        }
+        return depth;
+    }
+
+    private double totalGrids(Map<String, Double> requestParams) {
+        return Math.pow(2, findDepth(requestParams));
+    }
+
+    /** Find the longitude span of a tile based on the existing depth */
+    private double tileLengthX(Map<String, Double> requestParams) {
+        return (Constants.ROOT_LRLON - Constants.ROOT_ULLON) / totalGrids(requestParams);
+    }
+
+    /** Find the latitude span of a tile based on the existing depth */
+    private double tileLengthY(Map<String, Double> requestParams) {
+        return (Constants.ROOT_ULLAT - Constants.ROOT_LRLAT) / totalGrids(requestParams);
+    }
+
+    /** Find corresponding picture indexes as per the longitude */
+    private int[] findTileRangeX(Map<String, Double> requestParams) {
+        double leftMargin = requestParams.get("ullon") - Constants.ROOT_ULLON;
+        double rightMargin = requestParams.get("lrlon") - Constants.ROOT_ULLON;
+        int leftTile = (int) (leftMargin / tileLengthX(requestParams));
+        if (leftTile < 0) {
+            leftTile = 0;
+        }
+        int rightTile = (int) (rightMargin / tileLengthX(requestParams));
+        if (rightTile > totalGrids(requestParams) - 1) {
+            rightTile = (int) totalGrids(requestParams) - 1;
+        }
+        return intSequence(leftTile, rightTile);
+    }
+
+    /** Find corresponding picture indexes as per the latitude */
+    private int[] findTileRangeY(Map<String, Double> requestParams) {
+        double upperMargin = Constants.ROOT_ULLAT - requestParams.get("ullat");
+        double lowerMargin = Constants.ROOT_ULLAT - requestParams.get("lrlat");
+        int upperTile = (int) (upperMargin / tileLengthY(requestParams));
+        if (upperTile < 0) {
+            upperTile = 0;
+        }
+        int lowerTile = (int) (lowerMargin / tileLengthY(requestParams));
+        if (lowerTile > totalGrids(requestParams) - 1) {
+            lowerTile = (int) totalGrids(requestParams) - 1;
+        }
+        return intSequence(upperTile, lowerTile);
+    }
+
+    /** Create a consecutive array based on a start and an end */
+    private int[] intSequence(int smaller, int larger) {
+        int[] range = new int[larger - smaller + 1];
+        int val = smaller;
+        for (int i = 0; i <= larger - smaller; i++) {
+            range[i] = val;
+            val++;
+        }
+        return range;
+    }
+
+    /** Get a 2D array to contain all picture file names */
+    private String[][] getFileArrays(int[] x, int[] y, int depth) {
+        String[][] grids = new String[y.length][x.length];
+        for (int i = 0; i < y.length; i++) {
+            for (int j = 0; j < x.length; j++) {
+                grids[i][j] = "d" + depth + "_x" + x[j] + "_y" + y[i] + ".png";
+            }
+        }
+        return grids;
     }
 
     @Override
@@ -154,9 +248,9 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         Graphics graphic = img.getGraphics();
         int x = 0, y = 0;
 
-        for (int r = 0; r < numVertTiles; r += 1) {
+        for (String[] strings : renderGrid) {
             for (int c = 0; c < numHorizTiles; c += 1) {
-                graphic.drawImage(getImage(Constants.IMG_ROOT + renderGrid[r][c]), x, y, null);
+                graphic.drawImage(getImage(Constants.IMG_ROOT + strings[c]), x, y, null);
                 x += Constants.TILE_SIZE;
                 if (x >= img.getWidth()) {
                     x = 0;
